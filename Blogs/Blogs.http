@@ -1,0 +1,6 @@
+@Blogs_HostAddress = http://localhost:5051
+
+GET {{Blogs_HostAddress}}/blog/
+Accept: application/json
+
+###
