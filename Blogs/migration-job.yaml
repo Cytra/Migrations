@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ef-migration-job
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 100    
+  template:
+    spec:
+      containers:
+        - name: migration
+          image: cytra/blogs:latest
+          command: ["/bin/sh", "-c"]
+          args: ["./efbundle"]
+          env:
+            - name: ConnectionStrings__DatabaseConnectionString
+              value: "Server=mariadb-server;Database=Blogs;User=root;Password=root;"
+      restartPolicy: OnFailure

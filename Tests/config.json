@@ -1,0 +1,4 @@
+{
+  "BaseUrl": "http://localhost:5051/",
+  "ConnectionString": "Server=localhost;Database=Blogs;User=root;Password=root;"
+}

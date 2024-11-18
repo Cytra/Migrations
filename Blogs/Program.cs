@@ -1,18 +1,33 @@
-using Blogs.Database;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("DatabaseConnectionString");
-builder.Services.AddDbContext<MyDbContext>(x =>
-    x.UseNpgsql(connectionString));
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "http://localhost:8080/realms/local-dev";
+        options.Audience = "blogs";
+        options.RequireHttpsMetadata = false;  // Disable for local dev
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ReadAccess", policy => policy.RequireAssertion(context =>
+        context.User.HasClaim(c => c.Type == "scope" && c.Value.Contains("blogs:view"))
+    ));
+});
 
 var app = builder.Build();
 

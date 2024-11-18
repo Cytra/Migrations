@@ -6,4 +6,5 @@ namespace Blogs.Database;
 public class MyDbContext(DbContextOptions<MyDbContext> options) : Microsoft.EntityFrameworkCore.DbContext(options)
 {
     public DbSet<Blog> Blogs { get; set; }
+    public DbSet<TestData> TestData { get; set; }
 }

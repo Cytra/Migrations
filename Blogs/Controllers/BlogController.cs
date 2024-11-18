@@ -1,28 +1,16 @@
-﻿using Blogs.Database;
-using Blogs.Models;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Blogs.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BlogController(MyDbContext context) : ControllerBase
+public class BlogController() : ControllerBase
 {
-    [HttpGet]
-    public Task<List<Blog>> GetAll()
+    [Authorize(Policy = "ReadAccess")]
+    [HttpGet("secure-data")]
+    public IActionResult GetSecureData()
     {
-        return context.Blogs.ToListAsync();
-    }
-
-    [HttpPost]
-    public Task<int> SaveBlog(string name)
-    {
-        context.Blogs.Add(new Blog()
-        {
-            Name = name,
-            CreatedTimestamp = DateTime.UtcNow
-        });
-        return context.SaveChangesAsync();
+        return Ok("You have read access!");
     }
 }
